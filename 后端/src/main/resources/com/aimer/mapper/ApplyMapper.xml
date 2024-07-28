@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aimer.mapper.ApplyMapper">
+
+    <insert id="insertApply" useGeneratedKeys="true" keyProperty="id">
+        insert into apply(acceptUserAccount, applyUserAccount, answer, introduction, createTime, problem)
+        values (#{acceptUserAccount}, #{applyUserAccount}, #{answer}, #{introduction}, #{createTime}, #{problem})
+    </insert>
+    <update id="agreeApply">
+        update apply
+        set isAgree=#{is} ,updateTime=#{updateTime}
+        where id=#{applyId}
+    </update>
+    <select id="queryApplyFrom" resultType="com.aimer.pojo.response.SearchApplyListResponse">
+        select userAccount,apply.id as 'applyId',username,isAgree,apply.updateTime as 'updateTime',problem,answer
+        from apply,user
+        where apply.applyUserAccount=user.userAccount
+            and acceptUserAccount=#{userAccount}
+            and #{time,jdbcType=TIMESTAMP}>createTime
+        order by updateTime
+        limit #{beginPages},#{pageSize}
+    </select>
+    <select id="queryApplyTo" resultType="com.aimer.pojo.response.SearchApplyListResponse">
+        select userAccount,apply.id as 'applyId',username,isAgree,apply.updateTime as 'updateTime',problem,answer
+        from apply,user
+        where apply.acceptUserAccount=user.userAccount
+            and applyUserAccount=#{userAccount}
+          and #{time,jdbcType=TIMESTAMP}>createTime
+        order by updateTime
+        limit #{beginPages},#{pageSize}
+    </select>
+    <select id="getApplyById" resultType="com.aimer.pojo.entity.Apply">
+        select *
+        from apply
+        where id=#{applyId}
+    </select>
+    <select id="applyIsExist" resultType="java.lang.Integer">
+        select COUNT(*)
+        from apply
+        where applyUserAccount=#{userAccount} and acceptUserAccount=#{acceptUserAccount}
+    </select>
+    <select id="selectAllUserApply" resultType="java.lang.Integer">
+        select COUNT(*)
+        from apply
+        where applyUserAccount=#{userAccount}
+        and DATE(createTime)=CURDATE()
+    </select>
+</mapper>

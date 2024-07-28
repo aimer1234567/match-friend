@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aimer.mapper.UserMapper">
+    <insert id="insertUser">
+        insert into user(username,userAccount,userPassword)
+        VALUES (#{username}, #{userAccount}, #{userPassword});
+    </insert>
+    <update id="updateUserInformation">
+        update user_complete
+        <set>
+            <if test="username !=null and username !=''">
+                username=#{username},
+            </if>
+            <if test="avatarUrl !=null and avatarUrl !=''">
+                avatarUrl=#{avatarUrl},
+            </if>
+            <if test="gender !=null">
+                gender=#{gender},
+            </if>
+            <if test="phone !=null and phone !=''">
+                phone=#{phone},
+            </if>
+            <if test="wchat !=null and wchat !=''">
+                wchat=#{wchat},
+            </if>
+            <if test="tags !=null and tags !=''">
+                tags=#{tags},
+            </if>
+            <if test="introduction !=null and introduction !=''">
+                introduction=#{introduction},
+            </if>
+            <if test="problem !=null and problem !=''">
+                problem=#{problem},
+            </if>
+            <if test="age !=null">
+                age=#{age},
+            </if>
+            <if test="address !=null and address !=''">
+                address=#{address},
+            </if>
+            <if test="longitude !=null ">
+                longitude=#{longitude},
+                dimension=#{dimension},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <update id="updateAvatarUrl">
+        update user
+        set avatarUrl=#{fileUrl}
+        where id=#{id}
+    </update>
+
+    <select id="selectByAccount" resultType="java.lang.Integer">
+        select COUNT(*)
+        from user
+        where userAccount=#{userAccount}
+    </select>
+    <select id="selectUserByAccount" resultType="com.aimer.pojo.entity.User">
+        select *
+        from user_complete
+        where userAccount=#{userAccount}
+    </select>
+    <select id="selectList" resultType="com.aimer.pojo.VO.UserVO">
+        select username,userAccount, avatarUrl,tags,address,longitude, dimension,age
+        from user
+        where isDelete=0 and userStatus=0 and id!=#{id}
+        limit #{index},#{pageSize}
+    </select>
+    <select id="getUserInformation" resultType="com.aimer.pojo.entity.User">
+        select username,userAccount, avatarUrl, gender, userPassword,phone, wchat, userStatus, createTime, updateTime, isDelete, tags, introduction,problem,longitude,dimension,age,address
+        from user_complete
+        where id=#{id}
+    </select>
+    <select id="getUserTags" resultType="java.lang.String">
+        select tags
+        from user
+        where id=#{id}
+    </select>
+    <select id="getUserDetailVOByUserAccount" resultType="com.aimer.pojo.VO.UserDetailVO">
+        select username,userAccount, avatarUrl, gender, userPassword,phone, wchat, userStatus, createTime, updateTime, isDelete, tags, introduction,problem,longitude,dimension,age,address
+        from user_complete
+        where userAccount=#{userAccount} and userStatus=0 and isDelete=0;
+    </select>
+    <select id="selectUserConut" resultType="java.lang.Integer">
+        select count(*)
+        from user
+        where isDelete=0 and userStatus=0 and id!=#{id}
+    </select>
+
+</mapper>
